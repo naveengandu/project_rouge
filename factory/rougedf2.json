@@ -1,0 +1,9 @@
+{
+	"name": "rougedf2",
+	"location": "southindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "b69021ee-a9f3-4907-8500-076b84b8b577",
+		"tenantId": "cf87c4fe-327d-413d-b392-0e2b0e7276f4"
+	}
+}
