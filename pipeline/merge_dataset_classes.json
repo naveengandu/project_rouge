@@ -87,7 +87,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@not(equals(trim(item()['Rice Leaf Disease Images']), 'NA'))\n\n",
+									"value": "@not(equals(variables('d1_class'), 'NA'))",
 									"type": "Expression"
 								},
 								"ifTrueActivities": [
@@ -199,7 +199,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@not(equals(trim(item()['Rice_Leaf_AUG']), 'NA'))\n\n",
+									"value": "@not(equals(variables('d2_class'), 'NA'))",
 									"type": "Expression"
 								},
 								"ifTrueActivities": [
@@ -292,7 +292,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@not(equals(trim(item()['rice_leaf_diseases']), 'NA'))",
+									"value": "@not(equals(variables('d3_class'), 'NA'))",
 									"type": "Expression"
 								},
 								"ifTrueActivities": [
