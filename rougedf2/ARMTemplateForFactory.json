@@ -1,0 +1,856 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "rougedf2"
+		},
+		"rouge_adlsg2_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'rouge_adlsg2'"
+		},
+		"rouge_adls2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://rougestorageacc1.dfs.core.windows.net/"
+		},
+		"rouge_adlsg2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://projectrouge6363905707.dfs.core.windows.net/"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/merge_dataset_classes')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "retrieve kaggle dataset names (folder names)",
+				"activities": [
+					{
+						"name": "lookup mapped classes",
+						"description": "retrieve the list of mapped classes ",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "rouge_map_classes",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "loop mapped classes",
+						"description": "loop through each mapped class",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "lookup mapped classes",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('lookup mapped classes').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "IF Rice Leaf Disease Images",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "Set sink folder name",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "Set d1 class name",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "Set d2 class name",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "Set d3 class name",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@not(equals(trim(item()['Rice Leaf Disease Images']), 'NA'))\n\n",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "Copy Rice Leaf Disease Images dataset",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "BinarySource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true,
+															"deleteFilesAfterCompletion": false
+														},
+														"formatSettings": {
+															"type": "BinaryReadSettings"
+														}
+													},
+													"sink": {
+														"type": "BinarySink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings",
+															"copyBehavior": "PreserveHierarchy"
+														}
+													},
+													"enableStaging": false,
+													"preserve": [
+														"ACL",
+														"Owner",
+														"Group",
+														"Attributes"
+													]
+												},
+												"inputs": [
+													{
+														"referenceName": "raw_ds",
+														"type": "DatasetReference",
+														"parameters": {
+															"container_name": {
+																"value": "@pipeline().parameters.src_container_name",
+																"type": "Expression"
+															},
+															"dataset_name": "Rice Leaf Disease Images",
+															"class_name": {
+																"value": "@variables('d1_class')",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "stage_ds",
+														"type": "DatasetReference",
+														"parameters": {
+															"container_name": {
+																"value": "@pipeline().parameters.sink_container_name",
+																"type": "Expression"
+															},
+															"class_name": {
+																"value": "@variables('std_class_name')",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										]
+									}
+								},
+								{
+									"name": "Set sink folder name",
+									"description": "Set the name of the sink folder as the respective class",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "std_class_name",
+										"value": {
+											"value": "@item()['standardClass']",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "IF Rice_Leaf_AUG",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "IF Rice Leaf Disease Images",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@not(equals(trim(item()['Rice_Leaf_AUG']), 'NA'))\n\n",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "Copy Rice_Leaf_AUG",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "BinarySource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true
+														},
+														"formatSettings": {
+															"type": "BinaryReadSettings"
+														}
+													},
+													"sink": {
+														"type": "BinarySink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings",
+															"copyBehavior": "PreserveHierarchy"
+														}
+													},
+													"enableStaging": false,
+													"preserve": [
+														"ACL",
+														"Owner",
+														"Group",
+														"Attributes"
+													]
+												},
+												"inputs": [
+													{
+														"referenceName": "raw_ds",
+														"type": "DatasetReference",
+														"parameters": {
+															"container_name": {
+																"value": "@pipeline().parameters.src_container_name",
+																"type": "Expression"
+															},
+															"dataset_name": "Rice_Leaf_AUG",
+															"class_name": {
+																"value": "@variables('d2_class')",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "stage_ds",
+														"type": "DatasetReference",
+														"parameters": {
+															"container_name": {
+																"value": "@pipeline().parameters.sink_container_name",
+																"type": "Expression"
+															},
+															"class_name": {
+																"value": "@variables('std_class_name')",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										]
+									}
+								},
+								{
+									"name": "IF rice_leaf_diseases",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "IF Rice_Leaf_AUG",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@not(equals(trim(item()['rice_leaf_diseases']), 'NA'))",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "Copy rice_leaf_diseases",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "BinarySource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true
+														},
+														"formatSettings": {
+															"type": "BinaryReadSettings"
+														}
+													},
+													"sink": {
+														"type": "BinarySink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings",
+															"copyBehavior": "PreserveHierarchy"
+														}
+													},
+													"enableStaging": false,
+													"preserve": [
+														"ACL",
+														"Owner",
+														"Group",
+														"Attributes"
+													]
+												},
+												"inputs": [
+													{
+														"referenceName": "raw_ds",
+														"type": "DatasetReference",
+														"parameters": {
+															"container_name": {
+																"value": "@pipeline().parameters.src_container_name",
+																"type": "Expression"
+															},
+															"dataset_name": "rice_leaf_diseases",
+															"class_name": {
+																"value": "@variables('d3_class')",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "stage_ds",
+														"type": "DatasetReference",
+														"parameters": {
+															"container_name": {
+																"value": "@pipeline().parameters.sink_container_name",
+																"type": "Expression"
+															},
+															"class_name": {
+																"value": "@variables('d3_class')",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										]
+									}
+								},
+								{
+									"name": "Set d1 class name",
+									"description": "retrieve and set the name of the class from dataset 1 to be copied from. ",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "d1_class",
+										"value": {
+											"value": "@item()['Rice Leaf Disease Images']",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Set d2 class name",
+									"description": "retrieve and set the name of the class from dataset 2 to be copied from. ",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "d2_class",
+										"value": {
+											"value": "@item()['Rice_Leaf_AUG']",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Set d3 class name",
+									"description": "retrieve and set the name of the class from dataset 3 to be copied from. ",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "d3_class",
+										"value": {
+											"value": "@item()['rice_leaf_diseases']",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"src_container_name": {
+						"type": "string",
+						"defaultValue": "rawkaggledata"
+					},
+					"sink_container_name": {
+						"type": "string",
+						"defaultValue": "stagekaggledata"
+					}
+				},
+				"variables": {
+					"std_class_name": {
+						"type": "String"
+					},
+					"raw_class_name": {
+						"type": "String"
+					},
+					"d1_class": {
+						"type": "String"
+					},
+					"d2_class": {
+						"type": "String"
+					},
+					"d3_class": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-03-24T11:28:39Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/rouge_map_classes')]",
+				"[concat(variables('factoryId'), '/datasets/raw_ds')]",
+				"[concat(variables('factoryId'), '/datasets/stage_ds')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Binary1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rouge_adlsg2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container_name": {
+						"type": "string",
+						"defaultValue": "rawkaggledata"
+					},
+					"dataset_name": {
+						"type": "string"
+					},
+					"class_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@concat(dataset().dataset_name, '/', dataset().class_name)",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().container_name",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rouge_adlsg2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/kaggle_datasets')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "respective kaggle dataset folders",
+				"linkedServiceName": {
+					"referenceName": "rouge_adlsg2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"subdir_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().subdir_name",
+							"type": "Expression"
+						},
+						"fileSystem": "rawkaggledata"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rouge_adlsg2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/raw_ds')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "dataset linked to the source data (rawkaggledata)",
+				"linkedServiceName": {
+					"referenceName": "rouge_adls2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container_name": {
+						"type": "string"
+					},
+					"dataset_name": {
+						"type": "string"
+					},
+					"class_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@concat(dataset().dataset_name, '/', dataset().class_name)",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().container_name",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rouge_adls2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rouge_classes_mapping')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "A JSON array containing classes from each dataset mapped to a standard class",
+				"linkedServiceName": {
+					"referenceName": "rouge_adlsg2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "rouge_classes.json",
+						"fileSystem": "rawkaggledata"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"standardClass": {
+							"type": "string"
+						},
+						"Rice Leaf Disease Images": {
+							"type": "string"
+						},
+						"Rice_Leaf_AUG": {
+							"type": "string"
+						},
+						"rice_leaf_diseases": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rouge_adlsg2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rouge_map_classes')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rouge_adls2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "rouge_classes.json",
+						"fileSystem": "rawkaggledata"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"standardClass": {
+							"type": "string"
+						},
+						"Rice Leaf Disease Images": {
+							"type": "string"
+						},
+						"Rice_Leaf_AUG": {
+							"type": "string"
+						},
+						"rice_leaf_diseases": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rouge_adls2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rouge_adlsg2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"sink_container_name": {
+						"type": "string"
+					},
+					"std_class_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().std_class_name",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().sink_container_name",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rouge_adlsg2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/stage_ds')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rouge_adls2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container_name": {
+						"type": "string"
+					},
+					"class_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().class_name",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().container_name",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rouge_adls2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rouge_adls2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('rouge_adls2_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "rougeIR2",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/rougeIR2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rouge_adlsg2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('rouge_adlsg2_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('rouge_adlsg2_accountKey')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "rougeIR1",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/rougeIR1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rougeIR1')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"description": "Integration runtime to run ADF pipelines for project rouge",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 10,
+							"cleanup": false,
+							"customProperties": []
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rougeIR2')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"description": "Integration runtime linked to the student subs. ",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 10,
+							"cleanup": false,
+							"customProperties": []
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
