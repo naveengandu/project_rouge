@@ -152,38 +152,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/kaggle_datasets')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "respective kaggle dataset folders",
-				"linkedServiceName": {
-					"referenceName": "rouge_adlsg2",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"subdir_name": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": {
-							"value": "@dataset().subdir_name",
-							"type": "Expression"
-						},
-						"fileSystem": "rawkaggledata"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/rouge_adlsg2')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/raw_ds')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -471,7 +439,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"expression": {
-											"value": "@not(equals(trim(item()['Rice Leaf Disease Images']), 'NA'))\n\n",
+											"value": "@not(equals(variables('d1_class'), 'NA'))",
 											"type": "Expression"
 										},
 										"ifTrueActivities": [
@@ -583,7 +551,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"expression": {
-											"value": "@not(equals(trim(item()['Rice_Leaf_AUG']), 'NA'))\n\n",
+											"value": "@not(equals(variables('d2_class'), 'NA'))",
 											"type": "Expression"
 										},
 										"ifTrueActivities": [
@@ -676,7 +644,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"expression": {
-											"value": "@not(equals(trim(item()['rice_leaf_diseases']), 'NA'))",
+											"value": "@not(equals(variables('d3_class'), 'NA'))",
 											"type": "Expression"
 										},
 										"ifTrueActivities": [
