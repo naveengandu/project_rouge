@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "rougedf2"
+		},
+		"rouge_adlsg2_accountKey": {
+			"value": ""
+		},
+		"rouge_adls2_properties_typeProperties_url": {
+			"value": "https://rougestorageacc1.dfs.core.windows.net/"
+		},
+		"rouge_adlsg2_properties_typeProperties_url": {
+			"value": "https://projectrouge6363905707.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
