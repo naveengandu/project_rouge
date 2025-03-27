@@ -1,0 +1,33 @@
+{
+	"name": "raw_ds",
+	"properties": {
+		"description": "dataset linked to the source data (rawkaggledata)",
+		"linkedServiceName": {
+			"referenceName": "rouge_adls2",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"container_name": {
+				"type": "string"
+			},
+			"dataset_name": {
+				"type": "string"
+			},
+			"class_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "@concat(dataset().dataset_name, '/', dataset().class_name)",
+				"fileSystem": {
+					"value": "@dataset().container_name",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,35 @@
+{
+	"name": "rouge_map_classes",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "rouge_adls2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "rouge_classes.json",
+				"fileSystem": "rawkaggledata"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"standardClass": {
+					"type": "string"
+				},
+				"Rice Leaf Disease Images": {
+					"type": "string"
+				},
+				"Rice_Leaf_AUG": {
+					"type": "string"
+				},
+				"rice_leaf_diseases": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}

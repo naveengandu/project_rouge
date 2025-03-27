@@ -29,7 +29,7 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "rouge_classes_mapping",
+						"referenceName": "rouge_map_classes",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
@@ -128,28 +128,17 @@
 												"Owner",
 												"Group",
 												"Attributes"
-											],
-											"logSettings": {
-												"enableCopyActivityLog": true,
-												"copyActivityLogSettings": {
-													"logLevel": "Info",
-													"enableReliableLogging": false
-												},
-												"logLocationSettings": {
-													"linkedServiceName": {
-														"referenceName": "rouge_adlsg2",
-														"type": "LinkedServiceReference"
-													},
-													"path": "stagekaggledata"
-												}
-											}
+											]
 										},
 										"inputs": [
 											{
-												"referenceName": "Binary1",
+												"referenceName": "raw_ds",
 												"type": "DatasetReference",
 												"parameters": {
-													"container_name": "rawkaggledata",
+													"container_name": {
+														"value": "@pipeline().parameters.src_container_name",
+														"type": "Expression"
+													},
 													"dataset_name": "Rice Leaf Disease Images",
 													"class_name": {
 														"value": "@variables('d1_class')",
@@ -160,14 +149,14 @@
 										],
 										"outputs": [
 											{
-												"referenceName": "sink",
+												"referenceName": "stage_ds",
 												"type": "DatasetReference",
 												"parameters": {
-													"sink_container_name": {
+													"container_name": {
 														"value": "@pipeline().parameters.sink_container_name",
 														"type": "Expression"
 													},
-													"std_class_name": {
+													"class_name": {
 														"value": "@variables('std_class_name')",
 														"type": "Expression"
 													}
@@ -250,25 +239,11 @@
 												"Owner",
 												"Group",
 												"Attributes"
-											],
-											"logSettings": {
-												"enableCopyActivityLog": true,
-												"copyActivityLogSettings": {
-													"logLevel": "Info",
-													"enableReliableLogging": false
-												},
-												"logLocationSettings": {
-													"linkedServiceName": {
-														"referenceName": "rouge_adlsg2",
-														"type": "LinkedServiceReference"
-													},
-													"path": "stagekaggledata"
-												}
-											}
+											]
 										},
 										"inputs": [
 											{
-												"referenceName": "Binary1",
+												"referenceName": "raw_ds",
 												"type": "DatasetReference",
 												"parameters": {
 													"container_name": {
@@ -285,14 +260,14 @@
 										],
 										"outputs": [
 											{
-												"referenceName": "sink",
+												"referenceName": "stage_ds",
 												"type": "DatasetReference",
 												"parameters": {
-													"sink_container_name": {
+													"container_name": {
 														"value": "@pipeline().parameters.sink_container_name",
 														"type": "Expression"
 													},
-													"std_class_name": {
+													"class_name": {
 														"value": "@variables('std_class_name')",
 														"type": "Expression"
 													}
@@ -357,25 +332,11 @@
 												"Owner",
 												"Group",
 												"Attributes"
-											],
-											"logSettings": {
-												"enableCopyActivityLog": true,
-												"copyActivityLogSettings": {
-													"logLevel": "Info",
-													"enableReliableLogging": false
-												},
-												"logLocationSettings": {
-													"linkedServiceName": {
-														"referenceName": "rouge_adlsg2",
-														"type": "LinkedServiceReference"
-													},
-													"path": "stagekaggledata"
-												}
-											}
+											]
 										},
 										"inputs": [
 											{
-												"referenceName": "Binary1",
+												"referenceName": "raw_ds",
 												"type": "DatasetReference",
 												"parameters": {
 													"container_name": {
@@ -392,15 +353,15 @@
 										],
 										"outputs": [
 											{
-												"referenceName": "sink",
+												"referenceName": "stage_ds",
 												"type": "DatasetReference",
 												"parameters": {
-													"sink_container_name": {
+													"container_name": {
 														"value": "@pipeline().parameters.sink_container_name",
 														"type": "Expression"
 													},
-													"std_class_name": {
-														"value": "@variables('std_class_name')",
+													"class_name": {
+														"value": "@variables('d3_class')",
 														"type": "Expression"
 													}
 												}
