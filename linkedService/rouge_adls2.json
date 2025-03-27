@@ -1,0 +1,14 @@
+{
+	"name": "rouge_adls2",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://rougestorageacc1.dfs.core.windows.net/"
+		},
+		"connectVia": {
+			"referenceName": "rougeIR2",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
