@@ -390,7 +390,7 @@
 																"type": "Expression"
 															},
 															"class_name": {
-																"value": "@variables('d3_class')",
+																"value": "@variables('std_class_name')",
 																"type": "Expression"
 															}
 														}
