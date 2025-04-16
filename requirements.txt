@@ -1,0 +1,6 @@
+databricks.sdk
+kaggle
+azure-storage-blob
+tensorflow
+opencv-python
+tqdm
