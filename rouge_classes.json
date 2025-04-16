@@ -1,0 +1,50 @@
+[
+    {
+      "standardClass": "leaf_blight",
+      "Rice Leaf Disease Images": "Bacterialblight",
+      "Rice_Leaf_AUG": "Bacterial Leaf Blight",
+      "rice_leaf_diseases": "Bacterial leaf blight"
+    },
+    {
+      "standardClass": "blast",
+      "Rice Leaf Disease Images": "Blast",
+      "Rice_Leaf_AUG": "Leaf Blast",
+      "rice_leaf_diseases": "NA"
+    },
+    {
+      "standardClass": "brownspot",
+      "Rice Leaf Disease Images": "Brownspot",
+      "Rice_Leaf_AUG": "Brown Spot",
+      "rice_leaf_diseases": "Brown spot"
+    },
+    {
+      "standardClass": "tungro",
+      "Rice Leaf Disease Images": "Tungro",
+      "Rice_Leaf_AUG": "NA",
+      "rice_leaf_diseases": "NA"
+    },
+    {
+      "standardClass": "healthy",
+      "Rice Leaf Disease Images": "NA",
+      "Rice_Leaf_AUG": "Healthy Rice Leaf",
+      "rice_leaf_diseases": "NA"
+    },
+    {
+      "standardClass": "scald",
+      "Rice Leaf Disease Images": "NA",
+      "Rice_Leaf_AUG": "Leaf scald",
+      "rice_leaf_diseases": "NA"
+    },
+    {
+      "standardClass": "sheath_blight",
+      "Rice Leaf Disease Images": "NA",
+      "Rice_Leaf_AUG": "Sheath Blight",
+      "rice_leaf_diseases": "NA"
+    },
+    {
+      "standardClass": "smut",
+      "Rice Leaf Disease Images": "NA",
+      "Rice_Leaf_AUG": "NA",
+      "rice_leaf_diseases": "Leaf smut"
+    }
+  ]
