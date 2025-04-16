@@ -1,9 +1,0 @@
-{
-	"name": "rougedf",
-	"location": "southindia",
-	"identity": {
-		"type": "SystemAssigned",
-		"principalId": "fe1ce2e7-cd27-4563-ac82-b9220b2dce54",
-		"tenantId": "cf87c4fe-327d-413d-b392-0e2b0e7276f4"
-	}
-}
